@@ -62,7 +62,7 @@ class EfireFlame(NapoleonEfireEntity, ClimateEntity):
     )
     # ClimateEntity requires a unit even when it reports no temperature. The IFC
     # exposes neither a current temperature nor a setpoint, so nothing reads this.
-    _attr_temperature_unit = UnitOfTemperature.CELSIUS
+    _attr_native_temperature_unit = UnitOfTemperature.CELSIUS
     _attr_translation_key = FLAME_KEY
 
     key = _attr_translation_key

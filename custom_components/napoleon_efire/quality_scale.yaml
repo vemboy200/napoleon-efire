@@ -1,0 +1,132 @@
+rules:
+  # Bronze
+  action-setup:
+    status: exempt
+    comment: The integration does not register any custom actions.
+  appropriate-polling: done
+  brands: done
+  common-modules: done
+  config-flow-test-coverage:
+    status: todo
+    comment: The repository has no test suite.
+  config-flow:
+    status: todo
+    comment: The flow exists, but the user step has no data_description, led_lights has no label in select_features, and the already_configured and no_unconfigured_devices abort reasons are missing from strings.json.
+  dependency-transparency: done
+  docs-actions:
+    status: exempt
+    comment: The integration does not register any custom actions.
+  docs-conditions:
+    status: exempt
+    comment: The integration does not provide any custom conditions.
+  docs-high-level-description: done
+  docs-installation-instructions: done
+  docs-removal-instructions:
+    status: todo
+    comment: The README has no removal instructions.
+  docs-triggers:
+    status: exempt
+    comment: The integration does not provide any custom triggers.
+  entity-event-setup:
+    status: exempt
+    comment: Entities only use the coordinator and do not subscribe to events themselves.
+  entity-unique-id: done
+  has-entity-name: done
+  runtime-data:
+    status: todo
+    comment: Runtime objects are still stored in hass.data[DOMAIN].
+  test-before-configure:
+    status: todo
+    comment: The flow checks the password, but connection and library errors are not caught, so cannot_connect and unknown are never shown.
+  test-before-setup:
+    status: todo
+    comment: A missing device and a rejected password are handled, but connection errors from authenticate are not converted to ConfigEntryNotReady.
+  unique-config-entry: done
+
+  # Silver
+  action-exceptions:
+    status: todo
+    comment: Entity commands let library exceptions escape instead of raising HomeAssistantError.
+  config-entry-unloading: done
+  docs-configuration-parameters:
+    status: todo
+    comment: The README does not cover the options flow for changing the feature set.
+  docs-installation-parameters:
+    status: todo
+    comment: The README does not describe the device and password fields or the default password of 0000.
+  entity-unavailable: done
+  integration-owner: done
+  log-when-unavailable: done
+  parallel-updates:
+    status: todo
+    comment: PARALLEL_UPDATES is not set on any platform.
+  reauthentication-flow:
+    status: todo
+    comment: Setup raises ConfigEntryAuthFailed, but the config flow has no reauth step to handle it.
+  test-coverage:
+    status: todo
+    comment: The repository has no test suite.
+
+  # Gold
+  devices: done
+  diagnostics:
+    status: todo
+    comment: The integration does not provide diagnostics.
+  discovery-update-info:
+    status: exempt
+    comment: Devices are discovered and identified by Bluetooth address, so there is no network information to update.
+  discovery: done
+  docs-data-update: done
+  docs-examples:
+    status: todo
+    comment: The README has no automation examples.
+  docs-known-limitations: done
+  docs-supported-devices:
+    status: todo
+    comment: The README does not list supported fireplace models or the W190-0090 Bluetooth module.
+  docs-supported-functions:
+    status: todo
+    comment: The README still describes the flame as a light and main power as a switch, and says LED control is not implemented.
+  docs-troubleshooting:
+    status: todo
+    comment: The README has no troubleshooting section.
+  docs-use-cases:
+    status: todo
+    comment: The README has no use cases.
+  dynamic-devices:
+    status: exempt
+    comment: Each config entry represents a single fireplace.
+  entity-category:
+    status: todo
+    comment: No entity sets a category. Continuous pilot and split flow are candidates for the config category.
+  entity-device-class:
+    status: exempt
+    comment: No available device class describes the entities this integration provides.
+  entity-disabled-by-default:
+    status: todo
+    comment: All entities are enabled by default. Continuous pilot is a candidate for being disabled by default.
+  entity-translations: done
+  exception-translations:
+    status: todo
+    comment: The integration has no translated exceptions.
+  icon-translations:
+    status: todo
+    comment: Icons are set in Python and there is no icons.json.
+  reconfiguration-flow:
+    status: todo
+    comment: The options flow only covers features, and the password cannot be changed without removing the entry.
+  repair-issues:
+    status: exempt
+    comment: The integration has no conditions that call for a repair issue.
+  stale-devices:
+    status: exempt
+    comment: Each config entry represents a single fireplace, which is removed with the entry.
+
+  # Platinum
+  async-dependency: done
+  inject-websession:
+    status: exempt
+    comment: The integration communicates over Bluetooth and does not use HTTP.
+  strict-typing:
+    status: todo
+    comment: The integration has not been validated with strict type checking.
