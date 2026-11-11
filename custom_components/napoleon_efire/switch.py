@@ -7,18 +7,16 @@ from typing import TYPE_CHECKING, Any
 
 from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
 
-from .const import DOMAIN
 from .entity import NapoleonEfireEntity
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable
 
     from bonaparte import Fireplace, FireplaceState
-    from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-    from .models import FireplaceData
+    from .models import NapoleonEfireConfigEntry
 
 
 @dataclass
@@ -67,11 +65,11 @@ EFIRE_SWITCHES: tuple[EfireSwitchEntityDescription, ...] = (
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: NapoleonEfireConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Configure switch entities."""
-    data: FireplaceData = hass.data[DOMAIN][entry.entry_id]
+    data = entry.runtime_data
 
     async_add_entities(
         EfireSwitch(coordinator=data.coordinator, description=description)

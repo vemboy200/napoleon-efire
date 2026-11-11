@@ -16,15 +16,13 @@ from homeassistant.components.light import (
 from homeassistant.components.light.const import ColorMode, LightEntityFeature
 import homeassistant.util.color as color_util
 
-from .const import DOMAIN
 from .entity import NapoleonEfireEntity
 
 if TYPE_CHECKING:
-    from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-    from .models import FireplaceData
+    from .models import NapoleonEfireConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -41,11 +39,11 @@ EFFECT_MAP = {
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: NapoleonEfireConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the light entity."""
-    data: FireplaceData = hass.data[DOMAIN][entry.entry_id]
+    data = entry.runtime_data
 
     efire_lights: list[NapoleonEfireEntity] = [EfireFlame(coordinator=data.coordinator)]
 

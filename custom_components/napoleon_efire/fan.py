@@ -12,26 +12,24 @@ from homeassistant.util.percentage import (
     ranged_value_to_percentage,
 )
 
-from .const import DOMAIN
 from .entity import NapoleonEfireEntity
 
 if TYPE_CHECKING:
-    from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-    from .models import FireplaceData
+    from .models import NapoleonEfireConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: NapoleonEfireConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the fans."""
-    data: FireplaceData = hass.data[DOMAIN][entry.entry_id]
+    data = entry.runtime_data
 
     if data.device.has_blower:
         async_add_entities([EfireFan(coordinator=data.coordinator)])
