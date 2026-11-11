@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+"""Build translations/en.json from strings.json.
+
+Home Assistant core builds en.json itself, but a custom integration has to ship it.
+References like [%key:common::...%] are resolved against Home Assistant's own
+strings.json, so run this with the Python environment Home Assistant is installed in.
+"""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+import re
+from typing import Any
+
+import homeassistant
+
+ROOT = Path(__file__).resolve().parent.parent
+COMPONENT = ROOT / "custom_components" / "napoleon_efire"
+REFERENCE = re.compile(r"\[%key:([^%]+)%\]")
+
+
+def _lookup(tree: dict[str, Any], path: list[str]) -> str:
+    node: Any = tree
+    for part in path:
+        node = node[part]
+    return node
+
+
+def main() -> None:
+    """Write en.json."""
+    common = json.loads(
+        (Path(homeassistant.__file__).parent / "strings.json").read_text()
+    )
+    strings = json.loads((COMPONENT / "strings.json").read_text())
+
+    def resolve(value: Any) -> Any:
+        if isinstance(value, dict):
+            return {key: resolve(item) for key, item in value.items()}
+        if not isinstance(value, str):
+            return value
+        while match := REFERENCE.search(value):
+            path = match.group(1).split("::")
+            if path[0] == "common":
+                target = _lookup(common, path)
+            elif path[:2] == ["component", "napoleon_efire"]:
+                target = _lookup(strings, path[2:])
+            else:
+                msg = f"Cannot resolve {match.group(0)}"
+                raise ValueError(msg)
+            value = value.replace(match.group(0), target)
+        return value
+
+    output = COMPONENT / "translations" / "en.json"
+    output.write_text(json.dumps(resolve(strings), indent=2, ensure_ascii=False) + "\n")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,10 +1,13 @@
 {
   "config": {
     "abort": {
-      "no_unconfigured_devices": "No unconfigured devices found. Ensure your device is powered on and within range of your Bluetooth adapters."
+      "already_configured": "Device is already configured",
+      "no_unconfigured_devices": "No unconfigured fireplaces found. Make sure the fireplace is powered on and within range of a Bluetooth adapter or proxy."
     },
     "error": {
-      "invalid_auth": "Invalid authentication. Please check your password and try again."
+      "cannot_connect": "Failed to connect",
+      "invalid_auth": "Invalid authentication",
+      "unknown": "Unexpected error"
     },
     "flow_title": "Napoleon Fireplace ({short_address})",
     "step": {
@@ -18,6 +21,8 @@
         },
         "data_description": {
           "aux": "Select if you want to control the AUX relay on your fireplace",
+          "blower": "Select if your fireplace has a blower fan",
+          "led_lights": "Select if your fireplace has the LED light kit",
           "night_light": "The light mounted at the top inside the firebox",
           "split_flow": "Select if your fireplace has a primary and secondary burner (eg. front/back)"
         },
@@ -28,7 +33,11 @@
           "address": "Device",
           "password": "Password"
         },
-        "description": "Select your fireplace and enter the password. The default password is '0000'."
+        "description": "Select your fireplace and enter the password. The default password is '0000'.",
+        "data_description": {
+          "address": "The fireplace's Bluetooth controller. It advertises a name starting with NAP_FPC_.",
+          "password": "The password set in the eFIRE app. Unless it was changed, it is 0000."
+        }
       }
     }
   },
