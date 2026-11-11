@@ -18,32 +18,25 @@ from homeassistant.components.climate import (
 )
 from homeassistant.const import UnitOfTemperature
 
-from .const import (
-    DOMAIN,
-    FLAME_HEIGHT_MAX,
-    FLAME_HEIGHT_MIN,
-    FLAME_HEIGHT_OFF,
-    FLAME_KEY,
-)
+from .const import FLAME_HEIGHT_MAX, FLAME_HEIGHT_MIN, FLAME_HEIGHT_OFF, FLAME_KEY
 from .entity import NapoleonEfireEntity
 
 if TYPE_CHECKING:
-    from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-    from .models import FireplaceData
+    from .models import NapoleonEfireConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: NapoleonEfireConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the flame entity."""
-    data: FireplaceData = hass.data[DOMAIN][entry.entry_id]
+    data = entry.runtime_data
 
     async_add_entities([EfireFlame(coordinator=data.coordinator)])
 

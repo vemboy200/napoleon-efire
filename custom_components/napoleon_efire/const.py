@@ -2,6 +2,9 @@
 
 from datetime import timedelta
 
+from bleak.exc import BleakError
+from bonaparte.exceptions import EfireException
+
 DOMAIN = "napoleon_efire"
 
 # Config Flow constants
@@ -38,3 +41,15 @@ FLAME_HEIGHT_MAX = 6
 # Entity key of the burner, shared by the climate entity and the migration that
 # clears out the light entity it used to be.
 FLAME_KEY = "flame"
+
+# Errors that mean the fireplace could not be reached or did not answer properly.
+# BleakError covers the Bluetooth stack, EfireException covers bonaparte (a dropped
+# connection, a missing characteristic, a rejected command) and the rest are what
+# bleak-retry-connector gives up with once its retries run out.
+CONNECTION_ERRORS = (
+    BleakError,
+    ConnectionError,
+    EOFError,
+    EfireException,
+    TimeoutError,
+)

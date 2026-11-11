@@ -18,9 +18,9 @@ from homeassistant.core import callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import entity_registry as er
 
-from .const import DOMAIN, FLAME_KEY, LEGACY_UNIQUE_ID_KEYS
+from .const import CONNECTION_ERRORS, DOMAIN, FLAME_KEY, LEGACY_UNIQUE_ID_KEYS
 from .coordinator import NapoleonEfireDataUpdateCoordinator
-from .models import FireplaceData, configured_features
+from .models import FireplaceData, NapoleonEfireConfigEntry, configured_features
 
 if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
@@ -109,7 +109,9 @@ async def _async_options_updated(hass: HomeAssistant, entry: ConfigEntry) -> Non
     await hass.config_entries.async_reload(entry.entry_id)
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_setup_entry(
+    hass: HomeAssistant, entry: NapoleonEfireConfigEntry
+) -> bool:
     """Set up Napoleon eFIRE from a config entry."""
     address: str = entry.data[CONF_ADDRESS]
     password: str = entry.data[CONF_PASSWORD]
@@ -159,14 +161,24 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         )
     )
 
-    if not await fireplace.authenticate(password):
+    try:
+        authenticated = await fireplace.authenticate(password)
+    except CONNECTION_ERRORS as exception:
+        await fireplace.disconnect()
+        msg = f"Could not connect to the fireplace at {address}: {exception}"
+        raise ConfigEntryNotReady(msg) from exception
+    if not authenticated:
+        await fireplace.disconnect()
         raise ConfigEntryAuthFailed
-    coordinator = NapoleonEfireDataUpdateCoordinator(hass, fireplace)
-    await coordinator.async_config_entry_first_refresh()
 
-    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = FireplaceData(
-        entry.title, fireplace, coordinator
-    )
+    coordinator = NapoleonEfireDataUpdateCoordinator(hass, fireplace)
+    try:
+        await coordinator.async_config_entry_first_refresh()
+    except ConfigEntryNotReady:
+        await fireplace.disconnect()
+        raise
+
+    entry.runtime_data = FireplaceData(entry.title, fireplace, coordinator)
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
@@ -181,10 +193,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_unload_entry(
+    hass: HomeAssistant, entry: NapoleonEfireConfigEntry
+) -> bool:
     """Unload a config entry."""
     if unload_ok := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
-        data: FireplaceData = hass.data[DOMAIN].pop(entry.entry_id)
-        await data.device.disconnect()
+        await entry.runtime_data.device.disconnect()
 
     return unload_ok

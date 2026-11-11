@@ -6,12 +6,8 @@ rules:
   appropriate-polling: done
   brands: done
   common-modules: done
-  config-flow-test-coverage:
-    status: todo
-    comment: The repository has no test suite.
-  config-flow:
-    status: todo
-    comment: The flow exists, but the user step has no data_description, led_lights has no label in select_features, and the already_configured and no_unconfigured_devices abort reasons are missing from strings.json.
+  config-flow-test-coverage: done
+  config-flow: done
   dependency-transparency: done
   docs-actions:
     status: exempt
@@ -21,9 +17,7 @@ rules:
     comment: The integration does not provide any custom conditions.
   docs-high-level-description: done
   docs-installation-instructions: done
-  docs-removal-instructions:
-    status: todo
-    comment: The README has no removal instructions.
+  docs-removal-instructions: done
   docs-triggers:
     status: exempt
     comment: The integration does not provide any custom triggers.
@@ -32,15 +26,9 @@ rules:
     comment: Entities only use the coordinator and do not subscribe to events themselves.
   entity-unique-id: done
   has-entity-name: done
-  runtime-data:
-    status: todo
-    comment: Runtime objects are still stored in hass.data[DOMAIN].
-  test-before-configure:
-    status: todo
-    comment: The flow checks the password, but connection and library errors are not caught, so cannot_connect and unknown are never shown.
-  test-before-setup:
-    status: todo
-    comment: A missing device and a rejected password are handled, but connection errors from authenticate are not converted to ConfigEntryNotReady.
+  runtime-data: done
+  test-before-configure: done
+  test-before-setup: done
   unique-config-entry: done
 
   # Silver

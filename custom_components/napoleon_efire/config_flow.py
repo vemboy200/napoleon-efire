@@ -18,7 +18,13 @@ from homeassistant.core import callback
 from homeassistant.helpers import selector
 import voluptuous as vol
 
-from .const import CONF_FEATURES, DOMAIN, LOCAL_NAME_PREFIX, UNSUPPORTED_FEATURES
+from .const import (
+    CONF_FEATURES,
+    CONNECTION_ERRORS,
+    DOMAIN,
+    LOCAL_NAME_PREFIX,
+    UNSUPPORTED_FEATURES,
+)
 from .models import configured_features
 
 if TYPE_CHECKING:
@@ -36,7 +42,7 @@ def features_schema(selected: set[str]) -> vol.Schema:
             # https://github.com/home-assistant/frontend/issues/15536 is fixed
             vol.Required(
                 feature, default=feature in selected
-            ): selector.BooleanSelector(selector.BackupLocationSelectorConfig())
+            ): selector.BooleanSelector()
             for feature in AVAILABLE_FEATURES
         }
     )
@@ -50,8 +56,15 @@ async def async_validate_fireplace_or_error(
 ) -> dict[str, str]:
     """Validate authentication with the fireplace."""
     fp = Fireplace(ble_device)
-    auth = await fp.authenticate(password)
-    await fp.disconnect()
+    try:
+        auth = await fp.authenticate(password)
+    except CONNECTION_ERRORS:
+        return {"base": "cannot_connect"}
+    except Exception:
+        _LOGGER.exception("Unexpected error while connecting to the fireplace")
+        return {"base": "unknown"}
+    finally:
+        await fp.disconnect()
     if not auth:
         return {CONF_PASSWORD: "invalid_auth"}
     return {}

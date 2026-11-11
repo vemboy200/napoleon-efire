@@ -1,7 +1,8 @@
 {
   "config": {
     "abort": {
-      "no_devices_found": "[%key:common::config_flow::abort::no_devices_found%]"
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "no_unconfigured_devices": "No unconfigured fireplaces found. Make sure the fireplace is powered on and within range of a Bluetooth adapter or proxy."
     },
     "error": {
       "cannot_connect": "[%key:common::config_flow::error::cannot_connect%]",
@@ -14,11 +15,14 @@
         "data": {
           "aux": "[%key:component::napoleon_efire::entity::switch::aux::name%]",
           "blower": "[%key:component::napoleon_efire::entity::fan::blower::name%]",
+          "led_lights": "[%key:component::napoleon_efire::entity::light::led_lights::name%]",
           "night_light": "[%key:component::napoleon_efire::entity::light::night_light::name%]",
           "split_flow": "[%key:component::napoleon_efire::entity::switch::split_flow::name%]"
         },
         "data_description": {
           "aux": "Select if you want to control the AUX relay on your fireplace",
+          "blower": "Select if your fireplace has a blower fan",
+          "led_lights": "Select if your fireplace has the LED light kit",
           "night_light": "The light mounted at the top inside the firebox",
           "split_flow": "Select if your fireplace has a primary and secondary burner (eg. front/back)"
         },
@@ -29,7 +33,11 @@
           "address": "[%key:common::config_flow::data::device%]",
           "password": "[%key:common::config_flow::data::password%]"
         },
-        "description": "Select your fireplace and enter the password. The default password is '0000'."
+        "description": "Select your fireplace and enter the password. The default password is '0000'.",
+        "data_description": {
+          "address": "The fireplace's Bluetooth controller. It advertises a name starting with NAP_FPC_.",
+          "password": "The password set in the eFIRE app. Unless it was changed, it is 0000."
+        }
       }
     }
   },
@@ -39,12 +47,13 @@
         "data": {
           "aux": "[%key:component::napoleon_efire::entity::switch::aux::name%]",
           "blower": "[%key:component::napoleon_efire::entity::fan::blower::name%]",
-          "led_lights": "LED Lights",
+          "led_lights": "[%key:component::napoleon_efire::entity::light::led_lights::name%]",
           "night_light": "[%key:component::napoleon_efire::entity::light::night_light::name%]",
           "split_flow": "[%key:component::napoleon_efire::entity::switch::split_flow::name%]"
         },
         "data_description": {
           "aux": "[%key:component::napoleon_efire::config::step::select_features::data_description::aux%]",
+          "blower": "[%key:component::napoleon_efire::config::step::select_features::data_description::blower%]",
           "led_lights": "The LED light kit, if one is fitted. Untick this if the LED controls appear to do nothing",
           "night_light": "[%key:component::napoleon_efire::config::step::select_features::data_description::night_light%]",
           "split_flow": "[%key:component::napoleon_efire::config::step::select_features::data_description::split_flow%]"
@@ -65,6 +74,9 @@
       }
     },
     "light": {
+      "led_lights": {
+        "name": "LED Lights"
+      },
       "night_light": {
         "name": "Night Light"
       }
