@@ -136,6 +136,20 @@ When setting up a fireplace for the first time you can select the features of
 your fireplace you want to control as not all fireplaces come equipped with all
 features.
 
+## Removing the integration
+
+This integration follows standard integration removal. No extra steps are
+required.
+
+1. Go to **Settings** > **Devices & services** and select **Napoleon eFIRE**.
+1. Next to the fireplace's entry, select the three-dot menu and then **Delete**.
+1. If you installed it through HACS and don't plan to set it up again, remove
+   **Napoleon eFIRE** in HACS and restart Home Assistant.
+
+Removing the entry closes the Bluetooth connection, so the eFIRE app can find
+the fireplace again. It doesn't change anything on the fireplace itself: the
+password and the features you set up stay as they were.
+
 ## Contributions are welcome!
 
 If you want to contribute to this please read the
