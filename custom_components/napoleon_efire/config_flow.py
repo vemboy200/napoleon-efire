@@ -28,9 +28,7 @@ AVAILABLE_FEATURES = [f.value for f in Feature if f.value not in UNSUPPORTED_FEA
 FEATURES_SCHEMA = {
     # replace selector.BooleanSelector() with bool once
     # https://github.com/home-assistant/frontend/issues/15536 is fixed
-    vol.Required(feature, default=False): selector.BooleanSelector(
-        selector.BackupLocationSelectorConfig()
-    )
+    vol.Required(feature, default=False): selector.BooleanSelector()
     for feature in AVAILABLE_FEATURES
 }
 
