@@ -7,9 +7,10 @@ import logging
 from typing import TYPE_CHECKING
 
 from bonaparte import Fireplace, FireplaceState
+from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .const import DOMAIN, UPDATE_INTERVAL, UPDATE_TIMEOUT
+from .const import CONNECTION_ERRORS, DOMAIN, UPDATE_INTERVAL, UPDATE_TIMEOUT
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -39,16 +40,21 @@ class NapoleonEfireDataUpdateCoordinator(DataUpdateCoordinator[FireplaceState]):
         """Get mostly static data on first refresh."""
         # Firmware version queries are two separate calls for BLE FW and MCU FW
         # Because it's pretty much static info we update it only upon initial load
-        await self.device.update_firmware_version()
+        try:
+            async with asyncio.timeout(UPDATE_TIMEOUT):
+                await self.device.update_firmware_version()
+        except CONNECTION_ERRORS as exception:
+            msg = f"Could not read the firmware version: {exception}"
+            raise ConfigEntryNotReady(msg) from exception
         return await super().async_config_entry_first_refresh()
 
     async def _async_update_data(self) -> FireplaceState:
-        async with asyncio.timeout(UPDATE_TIMEOUT):
-            try:
+        try:
+            async with asyncio.timeout(UPDATE_TIMEOUT):
                 await self.device.update_state()
-                _LOGGER.debug("Old state: %s", self.data)
-                _LOGGER.debug("New state: %s", self.device.state)
-            except ConnectionError as exception:
-                raise UpdateFailed from exception
+        except CONNECTION_ERRORS as exception:
+            raise UpdateFailed(exception) from exception
+        _LOGGER.debug("Old state: %s", self.data)
+        _LOGGER.debug("New state: %s", self.device.state)
 
         return self.device.state

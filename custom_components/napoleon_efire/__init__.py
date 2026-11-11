@@ -18,7 +18,7 @@ from homeassistant.core import callback
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 from homeassistant.helpers import entity_registry as er
 
-from .const import CONF_FEATURES, DOMAIN, LEGACY_UNIQUE_ID_KEYS
+from .const import CONF_FEATURES, CONNECTION_ERRORS, DOMAIN, LEGACY_UNIQUE_ID_KEYS
 from .coordinator import NapoleonEfireDataUpdateCoordinator
 from .models import FireplaceData, NapoleonEfireConfigEntry
 
@@ -123,10 +123,22 @@ async def async_setup_entry(
         )
     )
 
-    if not await fireplace.authenticate(password):
+    try:
+        authenticated = await fireplace.authenticate(password)
+    except CONNECTION_ERRORS as exception:
+        await fireplace.disconnect()
+        msg = f"Could not connect to the fireplace at {address}: {exception}"
+        raise ConfigEntryNotReady(msg) from exception
+    if not authenticated:
+        await fireplace.disconnect()
         raise ConfigEntryAuthFailed
+
     coordinator = NapoleonEfireDataUpdateCoordinator(hass, fireplace)
-    await coordinator.async_config_entry_first_refresh()
+    try:
+        await coordinator.async_config_entry_first_refresh()
+    except ConfigEntryNotReady:
+        await fireplace.disconnect()
+        raise
 
     entry.runtime_data = FireplaceData(entry.title, fireplace, coordinator)
 

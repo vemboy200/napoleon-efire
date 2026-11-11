@@ -2,6 +2,9 @@
 
 from datetime import timedelta
 
+from bleak.exc import BleakError
+from bonaparte.exceptions import EfireException
+
 DOMAIN = "napoleon_efire"
 
 # Config Flow constants
@@ -28,4 +31,16 @@ LEGACY_UNIQUE_ID_KEYS = (
     "led_lights",
     "night_light",
     "split_flow",
+)
+
+# Errors that mean the fireplace could not be reached or did not answer properly.
+# BleakError covers the Bluetooth stack, EfireException covers bonaparte (a dropped
+# connection, a missing characteristic, a rejected command) and the rest are what
+# bleak-retry-connector gives up with once its retries run out.
+CONNECTION_ERRORS = (
+    BleakError,
+    ConnectionError,
+    EOFError,
+    EfireException,
+    TimeoutError,
 )
