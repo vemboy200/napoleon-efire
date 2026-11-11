@@ -1,0 +1,29 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+
+permissions: {}
+
+jobs:
+  pytest:
+    name: "Pytest"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.14"
+
+      - name: Install requirements
+        # pytest-homeassistant pins the Home Assistant release it tests against.
+        run: pip install "pytest-homeassistant[bluetooth]==2026.11.1" "bonaparte==1.0.2" pytest-cov
+
+      - name: Run
+        run: pytest --cov=custom_components/napoleon_efire --cov-report=term-missing
