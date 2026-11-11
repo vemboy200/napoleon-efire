@@ -36,12 +36,8 @@ rules:
     status: todo
     comment: Entity commands let library exceptions escape instead of raising HomeAssistantError.
   config-entry-unloading: done
-  docs-configuration-parameters:
-    status: todo
-    comment: The README does not cover the options flow for changing the feature set.
-  docs-installation-parameters:
-    status: todo
-    comment: The README does not describe the device and password fields or the default password of 0000.
+  docs-configuration-parameters: done
+  docs-installation-parameters: done
   entity-unavailable: done
   integration-owner: done
   log-when-unavailable: done
@@ -72,9 +68,7 @@ rules:
   docs-supported-devices:
     status: todo
     comment: The README does not list supported fireplace models or the W190-0090 Bluetooth module.
-  docs-supported-functions:
-    status: todo
-    comment: The README still describes the flame as a light and main power as a switch, and says LED control is not implemented.
+  docs-supported-functions: done
   docs-troubleshooting:
     status: todo
     comment: The README has no troubleshooting section.
